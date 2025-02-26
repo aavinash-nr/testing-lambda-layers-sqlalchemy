@@ -1,4 +1,4 @@
-# py-sql-testing
+# testing-lambda-layers-sqlalchemy
 This project is for testing lambdas using sqlalchemy where we use sqlite and creates db and write data from csv file line by line to the db to test the durations of nr layer.It contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders. It contains a csv file which is taken from one of the opensource research. The CSV file is being used for testing purpose.
 
 - hello_world - Code for the application's Lambda function.
