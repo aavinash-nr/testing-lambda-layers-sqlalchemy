@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  py-sql-testing
+
+  Sample SAM Template for py-sql-testing
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: hello_world/
+      Handler: newrelic_lambda_wrapper.handler
+      Runtime: python3.13
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          NEW_RELIC_LAMBDA_HANDLER: "app.lambda_handler"
+          NEW_RELIC_LICENSE_KEY: "nr-license-key"
+          NEW_RELIC_ACCOUNT_ID: "nr-account-id"
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true"
+          NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: "true"
+          NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG"
+          NEW_RELIC_SERVERLESS_MODE_ENABLED: "true"
+          NEW_RELIC_PACKAGE_REPORTING_ENABLED: "true"
+      Layers:
+        # This layer includes the New Relic Lambda Extension, a sidecar process that sends telemetry
+        - !Sub arn:aws:lambda:us-east-1:451483290750:layer:NewRelicPython313:5
+      Policies:
+        # This policy allows the lambda to know the value of the New Relic licence key. We need this so
+        # that we can send telemetry back to New Relic
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+    
+
+Outputs:
+  HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt HelloWorldFunctionRole.Arn
